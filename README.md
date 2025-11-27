@@ -2,7 +2,12 @@
 
 Padrão: 
   1) Snake case (igual ao Python) - "um_exemplo_qualquer"
-  2) Todo struct deve começar com maiúscula.
+  2) Todo struct/objeto deve começar com maiúscula - "typedef struct um_exemplo_qualquer Um_exemplo_qualquer"
+  3)  Quando possível, retornar SUCESSO, FALHA ou CHAVE_INVALIDA (definidos como 1, -1 e 0 respectivamente). Além do mais, caso uma função retorne ponteiro, ao falhar, retornar NULL.
+<img width="541" height="165" alt="image" src="https://github.com/user-attachments/assets/07891df2-bf95-43a1-a6ba-c402993cda98" />
+
+
+Critérios do Trabalho:
 
 ![WhatsApp Image 2025-11-14 at 10 02 01](https://github.com/user-attachments/assets/fc0dc7d4-497a-413c-9dca-1fd3b7c9f05b)
 
