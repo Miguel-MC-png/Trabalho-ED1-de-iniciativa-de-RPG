@@ -1,5 +1,9 @@
 # Trabalho-ED1-de-iniciativa-de-RPG
 
+Padrão: 
+  1) Snake case (que no Python) - "um_exemplo_qualquer"
+  2) Todo struct deve começar com maiúscula.
+
 ![WhatsApp Image 2025-11-14 at 10 02 01](https://github.com/user-attachments/assets/fc0dc7d4-497a-413c-9dca-1fd3b7c9f05b)
 
 
