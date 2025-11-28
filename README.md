@@ -1,5 +1,7 @@
 # Trabalho-ED1-de-iniciativa-de-RPG
 
+![03f5142a3515b4eccff735662d0b2d21](https://github.com/user-attachments/assets/b1840512-ad83-442f-a060-eebe19708614)
+
 Padrão: 
   1) Snake case (igual ao Python) - "um_exemplo_qualquer"
   2) Qualquer variável apelidada (usa typedef) tem que começar com maiúscula - "typedef struct um_exemplo_qualquer Um_exemplo_qualquer"
