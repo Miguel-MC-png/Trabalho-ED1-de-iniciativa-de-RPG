@@ -6,11 +6,12 @@
 #define CHAVE_INVALIDA 0
 
 
+#define TAM_MAX_NOME 50
 #define TAM_MAX_INICIATIVAS 50
 
 typedef enum dado
 {
-	D0 = 0,
+	D0,
 	D4 = 4,
 	D6 = 6,
 	D8 = 8,
@@ -23,15 +24,15 @@ typedef enum dado
 
 typedef struct personagem
 {
-	char nome[20];
-	int nivel;
+	char nome[TAM_MAX_NOME];
+	int nvl;
 	Dado dado_iniciativa;
 	int iniciativa_atual; 
 }Persona;
 
 	extern Persona vazio;
 
-	Persona* persona_create(char *nome, int nivel, Dado dado_iniciativa);
+	Persona* persona_create(char *nome, int nvl, Dado dado_iniciativa);
 	int persona_print(Persona *personagem);
 	int persona_destroy(Persona **personagem);
 

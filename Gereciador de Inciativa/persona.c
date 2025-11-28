@@ -9,16 +9,65 @@ int rolar_dado(Dado dado)
 	return 0;
 }
 
-Persona vazio = {"", 0, D0, CHAVE_INVALIDA};
+Persona vazio = {"", 0, D0, 0};
 	
-	Persona* persona_create(char *nome, int nivel, Dado dado_iniciativa)
+	Persona* persona_create(char *nome, int nvl, Dado dado_iniciativa)
 	{
-		return NULL;
+		int sucesso = 0;
+		
+		if (nome[0] == '\0')
+		{
+			printf("Error: nome vazio.\n");
+			sucesso = 1;
+		}
+		
+		int tam = strlen(nome);
+		if ( tam > TAM_MAX_NOME )
+		{
+			printf("Error: nome muito grande - %d.\n", tam);
+			sucesso = 1;
+		}
+			
+		if (nvl < 0 || nvl > 20)
+		{
+			printf("Error: alem do limite no nivel.\n");
+			sucesso = 1;
+		}
+			
+		if (dado_iniciativa == D0)
+		{
+			printf("Error: dado invalido.\n");
+			sucesso = 1;
+		}
+		
+		if (sucesso)
+			return NULL;
+				
+		
+		Persona * personagem = (Persona*) malloc(sizeof(Persona));
+		
+		if (personagem != NULL)
+		{
+			*personagem = vazio;
+			strcpy(personagem->nome, nome);
+			personagem->nvl = nvl;
+			personagem->dado_iniciativa = dado_iniciativa;
+		}
+		else
+		{
+			perror("Error: sem espaco na memoria!!!");
+		}
+		
+		return personagem;
 	}
 
 	int persona_destroy(Persona **personagem)
 	{
-		return CHAVE_INVALIDA;
+		if (personagem || *personagem)
+		{
+			printf("Error: ponteiro nulo");
+			return CHAVE_INVALIDA;
+		}
 	}
 
 	int persona_print(Persona *personagem)
