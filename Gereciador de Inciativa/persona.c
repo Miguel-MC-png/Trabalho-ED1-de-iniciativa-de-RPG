@@ -260,7 +260,7 @@ typedef struct iniciativas
 
 		    if (gerenciador->length >= TAM_MAX_INICIATIVAS)
 		    {
-		        printf("Error: gerenciador cheio.\n");
+		        printf("Gerenciador de iniciativas cheio.\n");
 		        return FALHA;
 		    }
 
@@ -322,4 +322,5 @@ typedef struct iniciativas
 			gerenciador->length--;
 			return SUCESSO;
 		}
+
 	*/
