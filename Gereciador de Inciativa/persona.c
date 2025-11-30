@@ -5,9 +5,6 @@
 #include <string.h>
 #include <time.h>
 
-void persona_cofig()
-	{
-	}
 
 int rolar_dado(Dado dado)
 	{
