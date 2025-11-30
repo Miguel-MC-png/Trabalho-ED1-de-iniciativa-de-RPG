@@ -10,10 +10,6 @@
 #define TAM_MAX_INICIATIVAS 50
 
 
-
-void persona_cofig();
-	//Cofigurar qlr coisa que executar esse código.
-
 typedef enum dado
 {
 	D0,

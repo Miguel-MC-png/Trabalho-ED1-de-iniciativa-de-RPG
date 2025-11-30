@@ -7,7 +7,6 @@
 
 void persona_cofig()
 	{
-		srand(time(NULL));
 	}
 
 int rolar_dado(Dado dado)
@@ -16,6 +15,7 @@ int rolar_dado(Dado dado)
 		{
 			return CHAVE_INVALIDA;
 		}
+		srand(time(NULL));
 		return rand() % dado + 1;
 	}
 
@@ -322,5 +322,4 @@ typedef struct iniciativas
 			gerenciador->length--;
 			return SUCESSO;
 		}
-
 	*/
