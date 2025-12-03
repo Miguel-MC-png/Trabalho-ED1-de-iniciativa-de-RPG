@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <math.h>
 
 void persona_config()
 	{
@@ -248,7 +247,7 @@ typedef struct iniciativas
 
 			if (gerenciador->length == 0)
 			{
-				printf("Não existe personagens no gerenciador de iniciativas.");
+				printf("Nao existe personagens no gerenciador de iniciativas.");
 				return FALHA;
 			}
 
@@ -330,11 +329,11 @@ typedef struct iniciativas
 
 		    persona_rolar_iniciativa(novo);
 
-
 			int inicio, fim, meio;
 			inicio = 0;
 			fim = gerenciador->length - 1;
 
+			//Ordem decrescente
 			while (inicio <= fim)
 			{
 				meio = (inicio + fim)/2;
@@ -382,55 +381,3 @@ typedef struct iniciativas
 
 			 return SUCESSO;
 		}
-		
-	/* Isto só serve caso queira copiar um método antigo meu...
-		int iniciativas_push(Iniciativas *gerenciador, Persona* personagem)
-		{
-			if (gerenciador == NULL)
-			{
-				return CHAVE_INVALIDA;
-			}
-
-			if (gerenciador->length < 0)
-			{
-				printf("Tamanho do gerenciador de iniciativas negativo.");
-				return CHAVE_INVALIDA;
-			}
-
-			for ( int i = (gerenciador->length - 1); i >= 0; i-- )
-			{
-				if (i + 1 == TAM_MAX_INICIATIVAS)
-					continue;
-
-				gerenciador->personagens[i + 1] = gerenciador->personagens[i];
-			}
-
-			gerenciador->personagens[0] = personagem;
-			gerenciador->length++;
-			return SUCESSO;
-		}
-
-		int iniciativas_pop(Iniciativas *gerenciador);
-		//N está pronto
-		{
-			if (gerenciador == NULL)
-			{
-				return CHAVE_INVALIDA;
-			}
-
-			if (gerenciador->length < 0)
-			{
-				printf("Tamanho do gerenciador de iniciativas negativo.");
-				return CHAVE_INVALIDA;
-			}
-
-			for ( int i = 0; i < gerenciador->length; i++)
-			{
-
-				gerenciador->personagens[i] = gerenciador->personagens[i + 1];
-			}
-
-			gerenciador->length--;
-			return SUCESSO;
-		}
-	*/
