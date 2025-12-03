@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
+#include <math.h>
 
 void persona_config()
 	{
@@ -248,12 +248,12 @@ typedef struct iniciativas
 
 			if (gerenciador->length == 0)
 			{
-				printf("Não há personagens no gerenciador de iniciativas.");
+				printf("Não existe personagens no gerenciador de iniciativas.");
 				return FALHA;
 			}
 
 			int contador = 1;
-			for (int i = gerenciador->length - 1; i >= 0; i--)
+			for (int i = 0; i < gerenciador->length; i++)
 			{
 				printf("%d) ", contador);
 				persona_print(gerenciador->personagens[i], 1);
@@ -287,7 +287,7 @@ typedef struct iniciativas
 		        return CHAVE_INVALIDA;
 		    }
 
-		    if (*novo == vazio)
+		    if (novo->dado_iniciativa == D0)
 			{
 				printf("Impossível adicionar personagem vazio.\n");
 				return FALHA;
@@ -316,7 +316,7 @@ typedef struct iniciativas
 				return CHAVE_INVALIDA;
 			}
 
-			if (*novo == vazio)
+			if (novo->dado_iniciativa == D0)
 			{
 				printf("Impossível adicionar personagem vazio.\n");
 				return FALHA;
@@ -328,10 +328,38 @@ typedef struct iniciativas
 		        return FALHA;
 		    }
 
-			int inicio, meio, fim;
-			fim = gerenciador->length - 1;
+		    persona_rolar_iniciativa(novo);
+
+
+			int inicio, fim, meio;
 			inicio = 0;
-			meio = (inicio + fim)/2;
+			fim = gerenciador->length - 1;
+
+			while (inicio <= fim)
+			{
+				meio = (inicio + fim)/2;
+				if (novo->iniciativa_atual < gerenciador->personagens[meio]->iniciativa_atual)
+				{
+					inicio = meio + 1;
+				}
+				else if (novo->iniciativa_atual > gerenciador->personagens[meio]->iniciativa_atual)
+				{
+					fim = meio - 1;
+				}
+				else
+				{
+					inicio = meio + 1;
+					break;
+				}
+
+			}
+
+			for (int i = gerenciador->length - 1; i >= inicio; i--)
+				gerenciador->personagens[i + 1] = gerenciador->personagens[i];
+
+			gerenciador->personagens[inicio] = novo;
+			gerenciador->length++;
+			return SUCESSO;
 		}
 
 	int iniciativa_remove_persona(Iniciativas * gerenciador, int endereco)

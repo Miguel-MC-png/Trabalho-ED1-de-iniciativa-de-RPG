@@ -1,7 +1,7 @@
 #include "persona.h"
 #include <stdio.h>
 
-void main_config()
+void config()
 	{
 		persona_config();
 	}
@@ -10,7 +10,7 @@ Persona personagens[1000];
 
 int main()
 {
-	main_config();
+	config();
 
 	return 0;
 }

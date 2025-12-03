@@ -11,6 +11,7 @@
 
 
 void persona_config();
+	//Serve para configurar qualquer código que executar "persona.h"
 
 typedef enum dado
 {
@@ -37,6 +38,8 @@ typedef struct personagem
 	extern Persona vazio;
 
 	Persona* persona_create(char *nome, int nvl, Dado dado_iniciativa);
+
+	int persona_rolar_iniciativa(Persona *personagem);
 
 	int persona_print(Persona *personagem,  int opcao);
 		// Opção 1: ler só o nome e a iniciativa_atual do personagem.
