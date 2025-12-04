@@ -1,0 +1,132 @@
+// Cada timer representa um valor do array
+struct Timer {
+    int valor
+    int deadline
+    Timer* prox   // próxima entrada do bucket
+}
+
+// Cada roda tem:
+// - Vários buckets
+// - Uma faixa (range) de valores que ela cobre
+// - Um tamanho de slot = intervalo por bucket
+struct Roda {
+    Bucket[bucket_count]  // lista ligada em cada slot
+    int bucket_count
+    int slot_intervalo  // intervalo do tempo que cada bucket cobre
+    int limite_superior  // maior deadline que esta roda consegue representar
+}
+
+
+n = tamanho do array
+max_valor = 0
+
+for cada elemento v em array:
+    se v > max_valor:
+        max_valor = v
+
+
+// queremos ter rodas proporcionais ao número de valores
+quantidade_rodas = escolher_com_base_em(n)
+// por exemplo: log2(n) ou um valor fixo dependendo da arquitetura
+
+// O intervalo base é o que você pediu:
+// intervalo_base = max_valor / n
+// se isso der 0 (quando max_valor < n), ajuste para 1
+intervalo_base = max_valor / n
+se intervalo_base < 1:
+    intervalo_base = 1
+
+
+para i de 0 até quantidade_rodas-1:
+    
+    // Define número de buckets por roda:
+    // você pode usar n / 2, n, 2n, ou fixos (ex: 256)
+    roda[i].bucket_count = definir_bucket_count_para_roda(i, n)
+
+    // Define intervalo do bucket:
+    roda[i].slot_intervalo = intervalo_base * (2 elevado a i)
+
+    // Quantidade total de tempo que esta roda cobre
+    roda[i].limite_superior = roda[i].bucket_count * roda[i].slot_intervalo
+
+    // Inicializar buckets vazios
+    para cada bucket k:
+        roda[i].Bucket[k] = vazio
+
+
+função inserir_timer(valor):
+
+    deadline = valor  // sleep sort usaria isso
+
+    // determinar qual roda deve armazenar esse deadline
+    para i de 0 até quantidade_rodas-1:
+
+        se deadline < roda[i].limite_superior:
+            // este timer cabe na roda i
+
+            // calcular qual bucket ele cai
+            slot = deadline / roda[i].slot_intervalo
+            slot = slot % roda[i].bucket_count
+
+            // inserir no início da lista ligada do bucket
+            inserir_timer_no_bucket(roda[i].Bucket[slot], valor, deadline)
+            retornar
+
+    // se não coube, significa que deadline é maior que todas as rodas
+    // agir conforme sua lógica:
+    // - criar roda extra
+    // - truncar
+    // - reprojetar hierarquia
+
+
+função executar_sleep_sort():
+
+    resultado = lista vazia
+    tempo_atual = 0
+
+    enquanto houver timers em qualquer roda:
+
+        // achar o próximo bucket não-vazio na roda 0
+        proximo_slot = encontrar_slot_na_roda_0(tempo_atual)
+
+        se proximo_slot não existir:
+            // significa que roda 0 está vazia
+            // precisamos "puxar" eventos da roda superior
+
+            chamar promover_da_roda_superior(1)
+            continuar
+
+        // avançar o tempo para o slot relevante
+        tempo_atual = proximo_slot * roda[0].slot_intervalo
+
+        // processar timers do bucket
+        bucket = roda[0].Bucket[proximo_slot]
+
+        enquanto bucket não vazio:
+            adicionar bucket.valor ao resultado
+            remover timer do bucket
+            bucket = bucket.prox
+
+        limpar bucket
+
+
+função promover_da_roda_superior(nivel):
+
+    se nivel >= quantidade_rodas:
+        // nada para promover
+        retornar
+
+    // para cada bucket na roda superior:
+    para cada slot na roda[nivel]:
+
+        para cada timer t naquele slot:
+
+            // recalcular slot para roda imediatamente inferior
+            novo_slot = t.deadline / roda[nivel-1].slot_intervalo
+
+            inserir t na roda[nivel-1].Bucket[novo_slot % roda[nivel-1].bucket_count]
+        
+        esvaziar slot
+
+
+retornar resultado  // array ordenado (sleep sort O(n))
