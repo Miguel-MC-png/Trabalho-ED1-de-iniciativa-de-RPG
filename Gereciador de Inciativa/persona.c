@@ -5,9 +5,9 @@
 #include <string.h>
 #include <time.h>
 
-void persona_config()
+void persona_config(void) 
 	{
-		srand(time(NULL));
+    	srand((unsigned)time(NULL));
 	}
 
 int rolar_dado(Dado dado)
@@ -27,26 +27,26 @@ Persona vazio = {"", 0, D0, 0};
 			
 			if (nome[0] == '\0')
 			{
-				printf("Error: nome vazio.\n");
+				printf("Nome vazio.\n");
 				invalido = 1;
 			}
 			
 			int tam = strlen(nome);
 			if ( tam > TAM_MAX_NOME)
 			{
-				printf("Error: nome muito grande - %d.\n", tam);
+				printf("Nome muito grande - %d.\n", tam);
 				invalido = 1;
 			}
 				
 			if (nvl < 0 || nvl > 20)
 			{
-				printf("Error: alem do limite no nivel.\n");
+				printf("Alem do limite no nivel.\n");
 				invalido = 1;
 			}
 				
 			if (dado_iniciativa == D0)
 			{
-				printf("Error: dado invalido.\n");
+				printf("Dado invalido.\n");
 				invalido = 1;
 			}
 			
@@ -206,18 +206,14 @@ typedef struct iniciativas
 		        return CHAVE_INVALIDA;
 		    }
 
-		    // Libera todos os personagens
-		    for (int i = 0; i < (*gerenciador)->length; i++)
-		    {
-		        if ((*gerenciador)->personagens[i] != NULL)
-		        {
-		            persona_destroy(&((*gerenciador)->personagens[i]));
-		        }
-		    }
 
+		    // Destruição rasa: não liberar Personas (pertencem ao banco).
+		    (*gerenciador)->length = 0;
+		    for (int i = 0; i < TAM_MAX_INICIATIVAS; i++) {
+		        (*gerenciador)->personagens[i] = NULL;
+		    }
 		    free(*gerenciador);
 		    *gerenciador = NULL;
-
 		    return SUCESSO;
 		}
 
@@ -248,7 +244,7 @@ typedef struct iniciativas
 			if (gerenciador->length == 0)
 			{
 				printf("Nao existe personagens no gerenciador de iniciativas.");
-				return FALHA;
+				return CHAVE_INVALIDA;
 			}
 
 			int contador = 1;
@@ -295,7 +291,7 @@ typedef struct iniciativas
 		    if (gerenciador->length >= TAM_MAX_INICIATIVAS)
 		    {
 		        printf("Gerenciador de iniciativas cheio.\n");
-		        return FALHA;
+		        return CHAVE_INVALIDA;
 		    }
 
 		    gerenciador->personagens[gerenciador->length] = novo;
@@ -324,7 +320,7 @@ typedef struct iniciativas
 			if (gerenciador->length >= TAM_MAX_INICIATIVAS)
 		    {
 		        printf("Gerenciador de iniciativas cheio.\n");
-		        return FALHA;
+		        return CHAVE_INVALIDA;
 		    }
 
 		    persona_rolar_iniciativa(novo);
@@ -361,23 +357,30 @@ typedef struct iniciativas
 			return SUCESSO;
 		}
 
-	int iniciativa_remove_persona(Iniciativas * gerenciador, int endereco)
+	char* iniciativa_remove_persona(Iniciativas * gerenciador, int endereco)
 		{
+			static char buffer[TAM_MAX_NOME];
+
 			if (verificar_validade(gerenciador) != SUCESSO)
-				return CHAVE_INVALIDA;
+				return NULL;
 
 			int endereco_valido = verificar_endereco(gerenciador, endereco);
 			if(endereco_valido != SUCESSO)
-				return endereco_valido;
-
-			int antepelutimo = gerenciador->length - 1;
-			for(int i = endereco - 1; i < antepelutimo; i++)
 			{
-				gerenciador->personagens[i] =  gerenciador->personagens[i + 1];
+				strcpy(buffer, "");
+			}
+			else
+			{
+				strcpy(buffer,gerenciador->personagens[endereco - 1]->nome);
+
+				int antepelutimo = gerenciador->length - 1;
+				for(int i = endereco - 1; i < antepelutimo; i++)
+				{
+					gerenciador->personagens[i] =  gerenciador->personagens[i + 1];
+				}
+				gerenciador->personagens[gerenciador->length - 1] = NULL;
+				gerenciador->length--;
 			}
 
-			gerenciador->personagens[gerenciador->length - 1] = NULL;
-			gerenciador->length--;
-
-			 return SUCESSO;
+			return buffer;
 		}

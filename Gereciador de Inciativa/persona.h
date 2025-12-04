@@ -58,14 +58,13 @@ typedef struct iniciativas Iniciativas;
 
 	Persona* iniciativas_get_persona(Iniciativas * gerenciador, int endereco);
 
-
 	int iniciativas_add_persona_unsorted(Iniciativas *gerenciador, Persona* novo);
 		//Partir do pressuposto que está desordenado
 
 	int iniciativas_add_persona_sorted(Iniciativas *gerenciador, Persona* novo);
 		//Partir do pressuposto que está ordenado, buscado pela busca binária
 
-	int iniciativa_remove_persona(Iniciativas * gerenciador, int endereco);
+	char* iniciativa_remove_persona(Iniciativas * gerenciador, int endereco);
 
 	int iniciativas_print(Iniciativas *gerenciador);
 
