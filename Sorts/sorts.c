@@ -4,6 +4,9 @@
 #include <time.h>
 #include <stdio.h>
 #include <string.h> /* memcpy */
+#include <math.h>
+
+#define TAM_MAX_BUCKET 257
 
 static void seed_once(void) {
     static int seeded = 0;
@@ -155,17 +158,138 @@ struct Roda {
     int limite_superior  // maior deadline que esta roda consegue representar
 }
 */
+typedef struct node
+    {
+        int dado;
+        struct node *prox;
+    }No;
+
+    No* no_create(int dado)
+    {
+        No *novo_no = (No *) calloc(1, sizeof(No));
+        if (novo_no != NULL)
+        {
+            novo_no->dado = dado;
+        }
+        else
+        {
+            printf("Error: sem espaco na memoria para fazer operacao.");
+        }
+            
+        return novo_no;  
+    }
+
+    No* no_destroy(No **lixo)
+    {
+        if ( lixo == NULL || *lixo == NULL )
+        {
+            printf("ERROR ao deletar No do timer!!!");
+            return NULL;
+        }
+        No* continuar = (*lixo)->prox;
+        free(*lixo);
+        *lixo = NULL;
+        return continuar;
+    }
 
 typedef struct timing_wheel
     {
-        int bucket[257];
+        No* rodinha[TAM_MAX_BUCKET];   //Serve como diversos flags praticamente
         unsigned long int qtd_dados;
-        long int interval[2];
-        struct timing_wheel *prox;
     }Roda;
 
-int inteiros_durma_bem_sort(Inteiros* v) 
-{ 
-    return 0;
-}
+    Roda* roda_create()
+    {
+        Roda *nova_roda = (Roda *) calloc(1, sizeof(Roda));
+        if (nova_roda == NULL)
+        {
+            printf("Error: sem espaco na memoria para fazer operacao.");
+        }
+            
+        return nova_roda; 
+    }
 
+    int roda_destroy(Roda **lixo)
+    {
+        if ( lixo == NULL || *lixo == NULL )
+        {
+            printf("ERROR ao deletar roda do timer!!!");
+            return FALHA;
+        }
+        free(*lixo);
+        *lixo = NULL;
+        return SUCESSO;
+    }
+    
+
+int inteiros_durmam_bem_sort(Inteiros* v) 
+{
+    if (v == NULL)
+        return CHAVE_INVALIDA;
+
+    if (v->length == 0)
+        return FALHA;
+
+    int qtd_rodas = 0;
+    int maior_valor = v->nums[0];
+    for (unsigned long int i = 0; i < v->length; i++)
+    {
+        if(maior_valor < v->nums[i])
+            maior_valor = v->nums[i];
+    }
+
+    qtd_rodas = (maior_valor + TAM_MAX_BUCKET) / TAM_MAX_BUCKET;
+
+    Roda* rodao[qtd_rodas];
+    for (int i = 0; i < qtd_rodas; i++) rodao[i] = NULL;
+
+    for (unsigned long int i = 0; i < v->length; i++)
+    {
+        int end_rodao = v->nums[i] / TAM_MAX_BUCKET;
+        int end_rodinha = v->nums[i] % TAM_MAX_BUCKET;
+
+        if ( rodao[end_rodao] == NULL )
+        {
+            rodao[end_rodao] = roda_create();
+            if ( rodao[end_rodao] == NULL)
+                return FALHA;
+        }
+        if(rodao[end_rodao]->rodinha[end_rodinha] == NULL)
+        {
+            rodao[end_rodao]->rodinha[end_rodinha] = no_create(v->nums[i]);
+            if (rodao[end_rodao]->rodinha[end_rodinha] == NULL)
+                return FALHA;
+        }
+        else
+        {
+            rodao[end_rodao]->rodinha[end_rodinha]->prox = no_create(v->nums[i]);
+            if (rodao[end_rodao]->rodinha[end_rodinha] == NULL)
+                return FALHA;
+        }
+        rodao[end_rodao]->qtd_dados++;
+    }
+
+    unsigned long int contador = 0;
+
+    for (int i = 0; i < qtd_rodas; i++) 
+    {
+        if (rodao[i] != NULL) 
+        {
+            for (int j = 0; j < TAM_MAX_BUCKET; j++) 
+            {
+                No* proximo = rodao[i]->rodinha[j];
+                while (proximo != NULL) 
+                {
+                    v->nums[k] = proximo->dado;
+                    contador++;
+                    proximo = no_destroy(&rodao[i]->rodinha[j]);
+                    rodao[i]->qtd_dados--;
+                }
+            }
+            roda_destroy(&rodao[i]);
+        }
+    }
+
+
+    return SUCESSO;
+}

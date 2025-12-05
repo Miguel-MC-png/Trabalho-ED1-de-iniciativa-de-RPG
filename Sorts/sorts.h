@@ -19,7 +19,7 @@ void inteiros_randomizar(Inteiros* inteiros);
 
 Inteiros* inteiros_destroy(Inteiros** lixo);
 
-int inteiros_durma_bem_sort(Inteiros* inteiros);
+int inteiros_durmam_bem_sort(Inteiros* inteiros);
 	//Ou Sleep_Well_Sort
 
 int inteiros_merge_sort(Inteiros* inteiros);
