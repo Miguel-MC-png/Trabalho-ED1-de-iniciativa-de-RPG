@@ -166,5 +166,6 @@ typedef struct timing_wheel
 
 int inteiros_durma_bem_sort(Inteiros* v) 
 { 
-    
+    return 0;
 }
+
