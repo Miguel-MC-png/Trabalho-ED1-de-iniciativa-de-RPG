@@ -146,7 +146,7 @@ Persona vazio = {"", 0, D0, 0};
 typedef struct iniciativas
 {
 	Persona * personagens[TAM_MAX_INICIATIVAS];
-	int length;
+	unsigned int length;
 }Iniciativas;
 
 	int verificar_validade(Iniciativas *gerenciador)
@@ -154,12 +154,6 @@ typedef struct iniciativas
 			if (gerenciador == NULL)
 			{
 				printf("Error: gerenciador de iniciativas nulo.\n");
-				return CHAVE_INVALIDA;
-			}
-
-			if (gerenciador->length < 0)
-			{
-				printf("Error: gerenciador de iniciativas com tamanho negativo.\n");
 				return CHAVE_INVALIDA;
 			}
 
@@ -384,3 +378,84 @@ typedef struct iniciativas
 
 			return buffer;
 		}
+
+
+	/* ===== Ordenação ===== */
+static void iniciativas_recalcular(Iniciativas* g) {
+    if (!g) return;
+    for (unsigned int i = 0; i < g->length; i++) persona_rolar_iniciativa(g->personagens[i]);
+}
+
+/* Merge estável decrescente */
+static void merge_por_ptr(Persona** arr, Persona** tmp, int l, int m, int r) {
+    int i=l, j=m+1, k=l;
+    while (i<=m && j<=r) {
+        if (arr[i]->iniciativa_atual >= arr[j]->iniciativa_atual) tmp[k++] = arr[i++];
+        else                                                      tmp[k++] = arr[j++];
+    }
+    while (i<=m) tmp[k++] = arr[i++];
+    while (j<=r) tmp[k++] = arr[j++];
+    for (int t=l; t<=r; t++) arr[t] = tmp[t];
+}
+static void msort_ptr(Persona** arr, Persona** tmp, int l, int r) {
+    if (l>=r) return;
+    int m = l + (r-l)/2;
+    msort_ptr(arr,tmp,l,m);
+    msort_ptr(arr,tmp,m+1,r);
+    if (arr[m]->iniciativa_atual >= arr[m+1]->iniciativa_atual) return;
+    merge_por_ptr(arr,tmp,l,m,r);
+}
+int iniciativas_ordenar_merge(Iniciativas* g) {
+    if (verificar_validade(g) != SUCESSO) return CHAVE_INVALIDA;
+    if (g->length <= 1) return SUCESSO;
+    Persona** tmp = (Persona**)malloc(g->length * sizeof(Persona*));
+    if (!tmp) return FALHA;
+    msort_ptr(g->personagens, tmp, 0, (int)g->length - 1);
+    free(tmp);
+    return SUCESSO;
+}
+
+/* Durmam (counting) estável decrescente */
+int iniciativas_ordenar_durmam(Iniciativas* g) {
+    if (verificar_validade(g) != SUCESSO) return CHAVE_INVALIDA;
+    if (g->length <= 1) return SUCESSO;
+
+    int minv = g->personagens[0]->iniciativa_atual;
+    int maxv = minv;
+    for (unsigned int i=1;i<g->length;i++){
+        if (g->personagens[i]->iniciativa_atual < minv) minv = g->personagens[i]->iniciativa_atual;
+        if (g->personagens[i]->iniciativa_atual > maxv) maxv = g->personagens[i]->iniciativa_atual;
+    }
+    int R = maxv - minv + 1;
+    if (R <= 0) return SUCESSO;
+
+    int* count = (int*)calloc((size_t)R, sizeof(int));
+    int* start = (int*)malloc((size_t)R * sizeof(int));
+    Persona** out = (Persona**)malloc(g->length * sizeof(Persona*));
+    if (!count || !start || !out) { free(count); free(start); free(out); return FALHA; }
+
+    for (unsigned int i=0;i<g->length;i++) count[g->personagens[i]->iniciativa_atual - minv]++;
+
+    int total = 0;
+    for (int v = maxv; v >= minv; --v) {
+        int idx = v - minv;
+        start[idx] = total;
+        total += count[idx];
+    }
+    for (unsigned int i=0;i<g->length;i++) {
+        int val = g->personagens[i]->iniciativa_atual - minv;
+        int pos = start[val]++;
+        out[pos] = g->personagens[i];
+    }
+    for (unsigned int i=0;i<g->length;i++) g->personagens[i] = out[i];
+
+    free(count); free(start); free(out);
+    return SUCESSO;
+}
+
+int iniciativas_recalcular_e_ordenar(Iniciativas* g, SortMethod metodo) {
+    if (verificar_validade(g) != SUCESSO) return CHAVE_INVALIDA;
+    iniciativas_recalcular(g);
+    if (metodo == SORT_MERGE) return iniciativas_ordenar_merge(g);
+    else                      return iniciativas_ordenar_durmam(g);
+}

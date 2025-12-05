@@ -72,4 +72,19 @@ typedef struct iniciativas Iniciativas;
 
 	int iniciativas_destroy(Iniciativas **gerenciador);
 
+	/* ===== Novo: ordenacao por opcao ===== */
+
+	typedef enum sort_method {
+	    SORT_MERGE = 1,
+	    SORT_DURMAM = 2
+	} SortMethod;
+
+	/* Recalcula todas as iniciativas e ordena pelo metodo escolhido */
+	int iniciativas_recalcular_e_ordenar(Iniciativas* g, SortMethod metodo);
+
+	/* Disponibiliza os dois metodos separadamente (util p/ testes) */
+	int iniciativas_ordenar_merge(Iniciativas* g);
+
+	int iniciativas_ordenar_durmam(Iniciativas* g);
+	
 #endif
